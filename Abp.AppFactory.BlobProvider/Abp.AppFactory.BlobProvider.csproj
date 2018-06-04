@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Images\ImageHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Abp" Version="2.1.2" />
+    <PackageReference Include="Hashids.net" Version="1.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
+    <PackageReference Include="RevStackCore-ImageSharp" Version="0.9.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="8.1.4" />
+  </ItemGroup>
+
+</Project>
