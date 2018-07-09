@@ -9,7 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Abp" Version="2.1.2" />
+    <PackageReference Include="Abp" Version="3.5.0" />
+    <PackageReference Include="Abp.AppFactory.Interfaces" Version="1.0.0" />
     <PackageReference Include="Hashids.net" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />

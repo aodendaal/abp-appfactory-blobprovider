@@ -1,4 +1,5 @@
 ﻿using Abp.AppFactory.BlobProvider.Configuration;
+using Abp.AppFactory.Interfaces;
 using Abp.Dependency;
 using HashidsNet;
 using Microsoft.WindowsAzure.Storage;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Abp.AppFactory.BlobProvider.Storage
 {
-    public class BlobStorage : ITransientDependency
+    public class BlobStorage : ITransientDependency, IBlobStorage
     {
         private readonly BlobConfiguration config;
 
@@ -27,25 +28,41 @@ namespace Abp.AppFactory.BlobProvider.Storage
             BlobClient = blobAccount.CreateCloudBlobClient();
         }
 
-        public async Task UploadAsync(string containerName, string directory, string fileName, byte[] file)
+        public string Endpoint => config.Endpoint;
+
+        public async Task UploadAsync(string containerName, string directory, string filename, byte[] file)
         {
-            var blob = await GetBlobAsync(containerName, directory, fileName);
+            var blob = await GetBlobAsync(containerName, directory, filename);
 
             await blob.UploadFromByteArrayAsync(file, 0, file.Length);
         }
 
-        public async Task DeleteAsync(string containerName, string directory, string fileName)
+        public async Task UploadAsync(string containerName, string filename, byte[] file)
         {
-            var blob = await GetBlobAsync(containerName, directory, fileName);
+            var blob = await GetBlobAsync(containerName, filename);
+
+            await blob.UploadFromByteArrayAsync(file, 0, file.Length);
+        }
+
+        public async Task DeleteAsync(string containerName, string directory, string filename)
+        {
+            var blob = await GetBlobAsync(containerName, directory, filename);
 
             await blob.DeleteIfExistsAsync();
         }
 
-        public async Task<CloudBlockBlob> GetBlobAsync(string containerName, string directory, string fileName)
+        public async Task<CloudBlockBlob> GetBlobAsync(string containerName, string directory, string filename)
         {
             var container = await GetOrCreateContainer(containerName);
 
-            return container.GetBlockBlobReference($"{directory}/{fileName}");
+            return container.GetBlockBlobReference($"{directory}/{filename}");
+        }
+
+        public async Task<CloudBlockBlob> GetBlobAsync(string containerName, string filename)
+        {
+            var container = await GetOrCreateContainer(containerName);
+
+            return container.GetBlockBlobReference(filename);
         }
 
         public async Task<CloudBlobContainer> GetOrCreateContainer(string containerName, BlobContainerPublicAccessType accessType = BlobContainerPublicAccessType.Blob)

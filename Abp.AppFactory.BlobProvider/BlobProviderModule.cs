@@ -1,4 +1,6 @@
 ﻿using Abp.AppFactory.BlobProvider.Configuration;
+using Abp.AppFactory.BlobProvider.Storage;
+using Abp.AppFactory.Interfaces;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Microsoft.AspNetCore.Hosting;
@@ -30,13 +32,18 @@ namespace Abp.AppFactory.BlobProvider
             {
                 DefaultEndpointsProtocol = _appConfiguration["BlobProvider:DefaultEndpointsProtocol"],
                 AccountName = _appConfiguration["BlobProvider:AccountName"],
-                AccountKey = _appConfiguration["BlobProvider:AccountKey"]
+                AccountKey = _appConfiguration["BlobProvider:AccountKey"],
+                Endpoint = _appConfiguration["BlobProvider:EndPoint"]
             };
 
             Configuration.Modules.BlobConfiguration().DefaultEndpointsProtocol = config.DefaultEndpointsProtocol;
             Configuration.Modules.BlobConfiguration().AccountName = config.AccountName;
             Configuration.Modules.BlobConfiguration().AccountKey = config.AccountKey;
+            Configuration.Modules.BlobConfiguration().Endpoint = config.Endpoint;
+
+            IocManager.Register<IBlobStorage, BlobStorage>(Dependency.DependencyLifeStyle.Transient);
         }
+
 
         public override void Initialize()
         {
