@@ -1,7 +1,7 @@
 ﻿using Abp.AppFactory.BlobProvider.Configuration;
 using Abp.AppFactory.Interfaces;
+using Abp.AppFactory.Utilities;
 using Abp.Dependency;
-using HashidsNet;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -15,7 +15,7 @@ namespace Abp.AppFactory.BlobProvider.Storage
     {
         private readonly BlobConfiguration config;
 
-        public CloudBlobClient BlobClient { get; set; }
+        private CloudBlobClient BlobClient { get; set; }
 
         public BlobStorage(BlobConfiguration config)
         {
@@ -30,18 +30,22 @@ namespace Abp.AppFactory.BlobProvider.Storage
 
         public string Endpoint => config.Endpoint;
 
-        public async Task UploadAsync(string containerName, string directory, string filename, byte[] file)
+        public async Task<string> UploadAsync(string containerName, string directory, string filename, byte[] file)
         {
             var blob = await GetBlobAsync(containerName, directory, filename);
 
             await blob.UploadFromByteArrayAsync(file, 0, file.Length);
+
+            return UrlPath.Combine(Endpoint, containerName, directory, filename);
         }
 
-        public async Task UploadAsync(string containerName, string filename, byte[] file)
+        public async Task<string> UploadAsync(string containerName, string filename, byte[] file)
         {
             var blob = await GetBlobAsync(containerName, filename);
 
             await blob.UploadFromByteArrayAsync(file, 0, file.Length);
+
+            return UrlPath.Combine(Endpoint, containerName, filename);
         }
 
         public async Task DeleteAsync(string containerName, string directory, string filename)
@@ -51,21 +55,21 @@ namespace Abp.AppFactory.BlobProvider.Storage
             await blob.DeleteIfExistsAsync();
         }
 
-        public async Task<CloudBlockBlob> GetBlobAsync(string containerName, string directory, string filename)
+        private async Task<CloudBlockBlob> GetBlobAsync(string containerName, string directory, string filename)
         {
-            var container = await GetOrCreateContainer(containerName);
+            var container = await GetOrCreateContainerAsync(containerName);
 
             return container.GetBlockBlobReference($"{directory}/{filename}");
         }
 
-        public async Task<CloudBlockBlob> GetBlobAsync(string containerName, string filename)
+        private async Task<CloudBlockBlob> GetBlobAsync(string containerName, string filename)
         {
-            var container = await GetOrCreateContainer(containerName);
+            var container = await GetOrCreateContainerAsync(containerName);
 
             return container.GetBlockBlobReference(filename);
         }
 
-        public async Task<CloudBlobContainer> GetOrCreateContainer(string containerName, BlobContainerPublicAccessType accessType = BlobContainerPublicAccessType.Blob)
+        private async Task<CloudBlobContainer> GetOrCreateContainerAsync(string containerName, BlobContainerPublicAccessType accessType = BlobContainerPublicAccessType.Blob)
         {
             if (containerName.Contains("[A-Z]"))
             {
@@ -90,11 +94,5 @@ namespace Abp.AppFactory.BlobProvider.Storage
             return container;
         }
 
-        public string GenerateHashId(string name, string salt)
-        {
-            var ids = name.Select(cha => Convert.ToInt32(cha)).ToArray();
-            var hashIdGenerator = new Hashids(salt);
-            return hashIdGenerator.Encode(ids);
-        }
     }
 }

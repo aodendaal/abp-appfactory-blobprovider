@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Andre Odendaal</Authors>
+    <Company>AppFactory</Company>
+    <PackageProjectUrl>https://github.com/aodendaal/abp-appfactory-blobprovider</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/aodendaal/abp-appfactory-blobprovider/blob/master/LICENSE</PackageLicenseUrl>
+    <Version>1.1.0</Version>
+    <PackageReleaseNotes>Update UploadAsync() functions to return URL path</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,8 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="Abp" Version="3.5.0" />
-    <PackageReference Include="Abp.AppFactory.Interfaces" Version="1.0.0" />
-    <PackageReference Include="Hashids.net" Version="1.2.2" />
+    <PackageReference Include="Abp.AppFactory.Interfaces" Version="1.2.0" />
+    <PackageReference Include="Abp.AppFactory.Utilities" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
     <PackageReference Include="RevStackCore-ImageSharp" Version="0.9.0" />
